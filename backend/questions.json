@@ -1,0 +1,94 @@
+{
+  "questions": [
+    {
+      "question": "What is Node.js?",
+      "options": [
+        "A JavaScript framework",
+        "A JavaScript runtime",
+        "A database management system"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the event loop in Node.js?",
+      "options": [
+        "A mechanism for handling asynchronous operations",
+        "A loop that iterates through arrays",
+        "A method for defining events"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "What is the purpose of npm in Node.js?",
+      "options": [
+        "To manage JavaScript packages and dependencies",
+        "To create web servers",
+        "To compile TypeScript code"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "What is a callback function in Node.js?",
+      "options": [
+        "A function passed as an argument to another function, which will be invoked at a later time",
+        "A function that returns a promise",
+        "A function that is executed synchronously"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "What is an EventEmitter in Node.js?",
+      "options": [
+        "A module for reading and writing files",
+        "An object that emits events that can be listened to by event listeners",
+        "A tool for debugging Node.js applications"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the purpose of the fs module in Node.js?",
+      "options": [
+        "To interact with the file system",
+        "To manage HTTP requests",
+        "To generate random numbers"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "What is the role of the global object in Node.js?",
+      "options": [
+        "To provide access to global variables and functions",
+        "To manage database connections",
+        "To handle user authentication"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "What is middleware in the context of Express.js?",
+      "options": [
+        "A tool for parsing HTTP requests",
+        "A function that receives the request and response objects, and the next middleware function in the application’s request-response cycle",
+        "A module for generating HTML templates"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the purpose of package.json in a Node.js project?",
+      "options": [
+        "To store metadata about the project and manage project dependencies",
+        "To define routes for the application",
+        "To configure database settings"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "What is a promise in Node.js?",
+      "options": [
+        "An object representing the eventual completion or failure of an asynchronous operation",
+        "A function that takes two arguments and returns a new function",
+        "A method for validating user input"
+      ],
+      "answer": 0
+    }
+  ]
+}
