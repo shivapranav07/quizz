@@ -1,85 +1,76 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const questionElement = document.getElementById('question');
-  const optionsElement = document.getElementById('options');
-  const feedbackElement = document.getElementById('feedback');
-  const scoreElement = document.getElementById('score');
-  const submitBtn = document.getElementById('submit-btn');
-  const nextBtn = document.getElementById('next-btn');
+ // quiz.js
 
-  let currentQuestionIndex = -1;
-  let score = 0;
+// Function to fetch questions from the backend
+async function fetchQuestions() {
+  try {
+      const response = await fetch('http://localhost:3000/questions'); // Assuming your backend server is running on localhost port 3000
+      const data = await response.json();
 
-  function fetchNextQuestion() {
-      currentQuestionIndex++; // Increment current question index before fetching next question
-      fetch('http://localhost:3000/question')
-          .then(response => {
-              if (!response.ok) {
-                  throw new Error('Network response was not ok');
-              }
-              return response.json();
-          })
-          .then(data => {
-              const { question } = data;
-              displayQuestion(question);
-          })
-          .catch(error => console.error('Error fetching question:', error));
+      return data.questions; // Assuming the response contains an array of questions
+  } catch (error) {
+      console.error('Error fetching questions:', error);
+      return []; // Return an empty array in case of an error
   }
+}
 
-  function displayQuestion(question) {
-      questionElement.textContent = question.question;
-      optionsElement.innerHTML = '';
+// Function to display question and options
+function displayQuestion(question) {
+  document.getElementById('question').textContent = question.question;
+  const options = question.options.map((option, index) => `<input type="radio" name="option" value="${index}"><label>${option}</label><br>`);
+  document.getElementById('options').innerHTML = options.join('');
+}
 
-      question.options.forEach((option, index) => {
-          const button = document.createElement('button');
-          button.textContent = option;
-          button.addEventListener('click', () => checkAnswer(index));
-          optionsElement.appendChild(button);
-      });
+// Function to fetch and display next question
+async function getNextQuestion() {
+  const questions = await fetchQuestions();
+  if (questions.length > 0) {
+      const currentIndex = parseInt(document.getElementById('question-index').value);
+      const nextIndex = (currentIndex + 1) % questions.length; // Loop back to the beginning if reached the end
+      document.getElementById('question-index').value = nextIndex;
+      displayQuestion(questions[nextIndex]);
+      document.getElementById('answer').textContent = '';
+  } else {
+      console.error('No questions found');
   }
+}
 
-  function checkAnswer(selectedOption) {
-      const data = { questionIndex: currentQuestionIndex, selectedOption };
-      fetch('http://localhost:3000/check-answer', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
+// Function to handle form submission
+document.getElementById('options-form').addEventListener('submit', async function (event) {
+  event.preventDefault();
+  const selectedOption = document.querySelector('input[name="option"]:checked');
+  if (!selectedOption) {
+      alert('Please select an option');
+      return;
+  }
+  const questionIndex = parseInt(document.getElementById('question-index').value);
+  const response = await fetch('http://localhost:3000/check-answer', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+          questionIndex,
+          selectedOption: selectedOption.value
       })
-      .then(response => {
-          if (!response.ok) {
-              throw new Error('Network response was not ok');
-          }
-          return response.json();
-      })
-      .then(data => {
-          const { isCorrect, feedback } = data;
-          feedbackElement.textContent = feedback;
-          if (isCorrect) {
-              score += 10;
-          }
-          updateScore();
-      })
-      .catch(error => console.error('Error checking answer:', error));
+  });
+  const data = await response.json();
+  if (data.isCorrect) {
+      document.getElementById('answer').textContent = 'Correct! Good job.';
+  } else {
+      const correctAnswer = data.correctAnswer;
+      document.getElementById('answer').textContent = `Incorrect. The correct answer is: ${correctAnswer}`;
   }
+});
 
-  function updateScore() {
-      scoreElement.textContent = `Score: ${score}`;
+// Function to handle click on "Next" button
+document.getElementById('next-btn').addEventListener('click', getNextQuestion);
+
+// Initial fetch of questions and display of the first question
+fetchQuestions().then(questions => {
+  if (questions.length > 0) {
+      document.getElementById('question-index').value = 0;
+      displayQuestion(questions[0]);
+  } else {
+      console.error('No questions found');
   }
-
-  function handleSubmit() {
-      // You can add more logic here if needed
-      feedbackElement.textContent = '';
-  }
-
-  function handleNext() {
-      fetchNextQuestion();
-      feedbackElement.textContent = '';
-  }
-
-  submitBtn.addEventListener('click', handleSubmit);
-  nextBtn.addEventListener('click', handleNext);
-
-  // Initial load
-  fetchNextQuestion();
 });

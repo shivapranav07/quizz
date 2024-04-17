@@ -26,25 +26,27 @@ app.get('/question', (req, res) => {
 });
 
 app.post('/check-answer', (req, res) => {
-    const { questionIndex, selectedOption } = req.body;
-    const question = questions[questionIndex];
-    if (!question || selectedOption === undefined || isNaN(parseInt(selectedOption)) || parseInt(selectedOption) < 0 || parseInt(selectedOption) >= question.options.length) {
-        res.status(400).json({ error: 'Invalid request. Please provide valid question index and selected option.' });
-        return;
-    }
+  const { questionIndex, selectedOption } = req.body;
+  const question = questions[questionIndex];
+  if (!question || selectedOption === undefined || isNaN(parseInt(selectedOption)) || parseInt(selectedOption) < 0 || parseInt(selectedOption) >= question.options.length) {
+      res.status(400).json({ error: 'Invalid request. Please provide valid question index and selected option.' });
+      return;
+  }
 
-    const isCorrect = question.answer === parseInt(selectedOption);
-    const correctAnswer = question.options[question.answer];
+  const isCorrect = question.answer === parseInt(selectedOption);
+  const correctAnswer = question.options[question.answer]; // Retrieve the correct answer
 
-    let feedback;
-    if (isCorrect) {
-        feedback = 'Correct! Good job.';
-    } else {
-        feedback = `Incorrect. The correct answer is: ${correctAnswer}`;
-    }
+  let feedback;
+  if (isCorrect) {
+      feedback = 'Correct! Good job.';
+  } else {
+      feedback = `Incorrect. The correct answer is: ${correctAnswer}`;
+  }
 
-    res.json({ isCorrect, feedback });
+  // Include the correct answer in the response
+  res.json({ isCorrect, correctAnswer, feedback });
 });
+
 
 app.post('/submit-answers', (req, res) => {
     const userAnswers = req.body;
